@@ -1,7 +1,9 @@
 const fs = require( 'fs' );
+const path = require( 'path' );
 const colors = require( 'colors' );
 const sharp = require( 'sharp' );
 const uniqid = require( 'uniqid' );
+const { crearDirectorioUsuarios } = require( '../../helpers/crearDirectorioUsuarios' );
 const { actualizarImagenUsuario } = require( '../usuario/actualizarImagenUsuario' );
 
 const cargarImagenUsuario = ( req, res ) => {
@@ -55,11 +57,13 @@ const cargarImagenUsuario = ( req, res ) => {
             );
         }
 
-        const directorio = `./uploads/usuarios/${ uid }`;
+        crearDirectorioUsuarios();
+
+        const directorioImagenUsuario = path.resolve( __dirname, `../../uploads/usuarios/${ uid }` );
         const nombreArchivo = `${ uniqid() }.jpg`;
 
-        if( !fs.existsSync( directorio ) ) {
-            fs.mkdirSync( directorio );
+        if( !fs.existsSync( directorioImagenUsuario ) ) {
+            fs.mkdirSync( directorioImagenUsuario );
         }
 
         sharp( bufferFile )
@@ -70,7 +74,7 @@ const cargarImagenUsuario = ( req, res ) => {
                     fit: 'cover'
                 }
             )
-            .toFile( `${ directorio }/${ nombreArchivo }` )
+            .toFile( `${ directorioImagenUsuario }/${ nombreArchivo }` )
             .then( async() => {
                 await actualizarImagenUsuario( res, 'usuarios', uid, nombreArchivo );
             } )

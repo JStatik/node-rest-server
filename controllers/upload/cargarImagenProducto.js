@@ -1,7 +1,9 @@
 const fs = require( 'fs' );
+const path = require( 'path' );
 const colors = require( 'colors' );
 const sharp = require( 'sharp' );
 const uniqid = require( 'uniqid' );
+const { crearDirectorioProductos } = require( '../../helpers/crearDirectorioProductos' );
 const { actualizarImagenProducto } = require( '../producto/actualizarImagenProducto' );
 
 const cargarImagenProducto = ( req, res ) => {
@@ -55,7 +57,9 @@ const cargarImagenProducto = ( req, res ) => {
             );
         }
 
-        const directorioUsuario = `./uploads/productos/${ uid }`;
+        crearDirectorioProductos();
+
+        const directorioUsuario = path.resolve( __dirname, `../../uploads/productos/${ uid }` );
 
         if( !fs.existsSync( directorioUsuario ) ) {
             fs.mkdirSync( directorioUsuario );
